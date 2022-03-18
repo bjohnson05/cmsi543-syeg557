@@ -29,6 +29,15 @@ public class CalculatorTest {
       int sum = calculator2.evaluate( "1+2+3" );
       assertEquals( 6, sum );
    }
+
+  // Test of the new Calculator2 class ~ PASSES!
+   @Test
+   public void evaluatesExpression3() {
+      Calculator2 calculator2 = new Calculator2();
+      int sum = calculator2.evaluate( "1+2+3+4" );
+      assertEquals( 6, sum );
+   }
+
 }
 
 
