@@ -1,0 +1,334 @@
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<  File name   :  crossword1.html
+<  Purpose     :  a crossword puzzle game to test hexadecimal number system learning
+<  Author      :  B.J. Johnson, from an idea by VESLL at LMU; see dissertation for citation
+<  Date        :  2015-05-26
+<  Description :  This page presents a "crossword puzzle" which is implemented in hexadecimal code.  The
+<                 puzzle clues are presented as hexadecimal (hex) arithmetic problems of addition and
+<                 subtraction, with the results being "words" which are comprised of the hex digits so as
+<                 to make common words.  The hex digits A - F are used, with the zero representing the "O"
+<                 letter of the alphabet.  For example, the decimal number 48879 is represented by the hex
+<                 string "BEEF", and the decimal value 49374 is represented as "C0DE" in hex.  Leading
+<                 zeros are indicated in the clues.
+<  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<  Revision History
+<  ----------------
+<   Rev      Date     Modified by:  Description of modification
+<  -----  ----------  ------------  ----------------------------------------
+<  1.0.0  2015-05-26  B.J. Johnson  Initial version
+<  1.1.0  2016-03-05  B.J. Johnson  Changed code that outputs results to perform output at end
+<                                   Added some additional output prompts to show time minutes AND score
+<                                   Added code to reset the tracking array when the scores are output
+<                                      (fixes re-displaying of scores when reset clicked for second run)
+<  1.2.0  2016-05-22  B.J. Johnson  Added code to track whether all tiles have been clicked; revised the
+<                                      scoring for time completion from 15/30 to 30/45
+<                                   Modified to NOT award time points if not all tiles have been clicked
+<  1.3.0  2017-01-15  B.J. Johnson  Added code to prompt participant for ID number; changed "alert" to
+<                                      "prompt"; added function to call google docs to write results to
+<                                      a google sheet; requires a separate web page that will start the
+<                                      google authentication process
+<  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!doctype html>
+<html>
+   <head>
+      <meta charset='UTF-8' />
+      <title>Post-Training Test</title>
+      <link   rel ='shortcut icon'   href='CGU_logo2.ico' />
+      <link   rel ='stylesheet'      type='text/css' href='crossword.css' />
+      <script type='text/javascript' src ='crossword-c.js'></script>
+      <script type='text/javascript' src ='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
+   </head>
+   <body style='background-color: #eee' onload='initSolution1()'>
+      <h1 style='text-align: center;'>Crossword Puzzle Post-Training Test</h1>
+      <p style='font-size: 125%'>Solve the hexadecimal clues to obtain the 'words' to solve the puzzle.<br />
+         Click the <input type='button' id='startbtn' value='Start' onclick='startTimer()' /> button to begin the test.<br />
+         Click the light blue arrows above the numbers to increase the values.<br />
+         Click the olive grey arrows below the numbers to decrease the values.<br />
+         Be sure to try ALL the digits to ensure you get time credit.<br />
+         Click the <input type='button' id='stopbtn' value='Stop' onclick='stopAndCheck()'/> button when you are finished.<br /></p>
+      <div class='leftside'>
+         <table class='table1'>
+            <!-- row one -->
+            <tr>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='uparrow' onclick='bumpup("cell0106")'></td>
+               <td class='uparrow' onclick='bumpup("cell0107")'></td>
+               <td class='uparrow' onclick='bumpup("cell0108")'></td>
+               <td class='uparrow' onclick='bumpup("cell0109")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='uparrow' onclick='bumpup("cell0112")'></td>
+               <td class='blackoutsm'></td>
+            </tr>
+            <tr>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+               <td id='cell0106' class='number n1'>0</td>
+               <td id='cell0107' class='number n2'>0</td>
+               <td id='cell0108' class='number'>0</td>
+               <td id='cell0109' class='number'>0</td>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+               <td id='cell0112' class='number n3'>0</td>
+               <td class='blackoutlg'></td>
+            </tr>
+            <tr>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='downarrow' onclick='bumpdn("cell0106")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0107")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0108")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0109")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='downarrow' onclick='bumpdn("cell0112")'></td>
+               <td class='blackoutsm'></td>
+            </tr>
+            <tr><td colspan='14'></td></tr>
+            <!-- row two -->
+            <tr>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='uparrow' onclick='bumpup("cell0402")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='uparrow' onclick='bumpup("cell0405")'></td>
+               <td class='blackoutsm'></td>
+               <td class='uparrow' onclick='bumpup("cell0407")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='uparrow' onclick='bumpup("cell0410")'></td>
+               <td class='blackoutsm'></td>
+               <td class='uparrow' onclick='bumpup("cell0412")'></td>
+               <td class='blackoutsm'></td>
+            </tr>
+            <tr>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+               <td id='cell0402' class='number n4'>0</td>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+               <td id='cell0405' class='number n5'>0</td>
+               <td class='blackoutlg'></td>
+               <td id='cell0407' class='number'>0</td>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+               <td id='cell0410' class='number n6'>0</td>
+               <td class='blackoutlg'></td>
+               <td id='cell0412' class='number'>0</td>
+               <td class='blackoutlg'></td>
+            </tr>
+            <tr>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='downarrow' onclick='bumpdn("cell0402")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='downarrow' onclick='bumpdn("cell0405")'></td>
+               <td class='blackoutsm'></td>
+               <td class='downarrow' onclick='bumpdn("cell0407")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='downarrow' onclick='bumpdn("cell0410")'></td>
+               <td class='blackoutsm'></td>
+               <td class='downarrow' onclick='bumpdn("cell0412")'></td>
+               <td class='blackoutsm'></td>
+            </tr>
+            <tr><td colspan='14'></td></tr>
+            <!-- row three -->
+            <tr>
+               <td class='uparrow' onclick='bumpup("cell0700")'></td>
+               <td class='uparrow' onclick='bumpup("cell0701")'></td>
+               <td class='uparrow' onclick='bumpup("cell0702")'></td>
+               <td class='blackoutsm'></td>
+               <td class='uparrow' onclick='bumpup("cell0704")'></td>
+               <td class='uparrow' onclick='bumpup("cell0705")'></td>
+               <td class='uparrow' onclick='bumpup("cell0706")'></td>
+               <td class='uparrow' onclick='bumpup("cell0707")'></td>
+               <td class='uparrow' onclick='bumpup("cell0708")'></td>
+               <td class='uparrow' onclick='bumpup("cell0709")'></td>
+               <td class='uparrow' onclick='bumpup("cell0710")'></td>
+               <td class='uparrow' onclick='bumpup("cell0711")'></td>
+               <td class='uparrow' onclick='bumpup("cell0712")'></td>
+               <td class='blackoutsm'></td>
+            </tr>
+            <tr>
+               <td id='cell0700' class='number n7'>0</td>
+               <td id='cell0701' class='number'>0</td>
+               <td id='cell0702' class='number'>0</td>
+               <td class='blackoutlg'></td>
+               <td id='cell0704' class='number n8'>0</td>
+               <td id='cell0705' class='number'>0</td>
+               <td id='cell0706' class='number'>0</td>
+               <td id='cell0707' class='number'>0</td>
+               <td id='cell0708' class='number'>0</td>
+               <td id='cell0709' class='number'>0</td>
+               <td id='cell0710' class='number'>0</td>
+               <td id='cell0711' class='number n9'>0</td>
+               <td id='cell0712' class='number'>0</td>
+               <td class='blackoutlg'></td>
+            </tr>
+            <tr>
+               <td class='downarrow' onclick='bumpdn("cell0700")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0701")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0702")'></td>
+               <td class='blackoutsm'></td>
+               <td class='downarrow' onclick='bumpdn("cell0704")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0705")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0706")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0707")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0708")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0709")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0710")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0711")'></td>
+               <td class='downarrow' onclick='bumpdn("cell0712")'></td>
+               <td class='blackoutsm'></td>
+            </tr>
+            <tr><td colspan='14'></td></tr>
+            <!-- row four -->
+            <tr>
+               <td class='uparrow' onclick='bumpup("cell1000")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='uparrow' onclick='bumpup("cell1003")'></td>
+               <td class='uparrow' onclick='bumpup("cell1004")'></td>
+               <td class='uparrow' onclick='bumpup("cell1005")'></td>
+               <td class='blackoutsm'></td>
+               <td class='uparrow' onclick='bumpup("cell1007")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='uparrow' onclick='bumpup("cell1010")'></td>
+               <td class='uparrow' onclick='bumpup("cell1011")'></td>
+               <td class='uparrow' onclick='bumpup("cell1012")'></td>
+               <td class='uparrow' onclick='bumpup("cell1013")'></td>
+            </tr>
+            <tr>
+               <td id='cell1000' class='number'>0</td>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+               <td id='cell1003' class='number n10'>0</td>
+               <td id='cell1004' class='number'>0</td>
+               <td id='cell1005' class='number'>0</td>
+               <td class='blackoutlg'></td>
+               <td id='cell1007' class='number'>0</td>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+               <td id='cell1010' class='number n11'>0</td>
+               <td id='cell1011' class='number'>0</td>
+               <td id='cell1012' class='number'>0</td>
+               <td id='cell1013' class='number'>0</td>
+            </tr>
+            <tr>
+               <td class='downarrow' onclick='bumpdn("cell1000")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='downarrow' onclick='bumpdn("cell1003")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1004")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1005")'></td>
+               <td class='blackoutsm'></td>
+               <td class='downarrow' onclick='bumpdn("cell1007")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='downarrow' onclick='bumpdn("cell1010")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1011")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1012")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1013")'></td>
+            </tr>
+            <tr><td colspan='14'></td></tr>
+            <!-- row five -->
+            <tr>
+               <td class='uparrow' onclick='bumpup("cell1300")'></td>
+               <td class='uparrow' onclick='bumpup("cell1301")'></td>
+               <td class='uparrow' onclick='bumpup("cell1302")'></td>
+               <td class='uparrow' onclick='bumpup("cell1303")'></td>
+               <td class='uparrow' onclick='bumpup("cell1304")'></td>
+               <td class='uparrow' onclick='bumpup("cell1305")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='uparrow' onclick='bumpup("cell1308")'></td>
+               <td class='uparrow' onclick='bumpup("cell1309")'></td>
+               <td class='uparrow' onclick='bumpup("cell1310")'></td>
+               <td class='uparrow' onclick='bumpup("cell1311")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+            </tr>
+            <tr>
+               <td id='cell1300' class='number n12'>0</td>
+               <td id='cell1301' class='number'>0</td>
+               <td id='cell1302' class='number'>0</td>
+               <td id='cell1303' class='number'>0</td>
+               <td id='cell1304' class='number'>0</td>
+               <td id='cell1305' class='number'>0</td>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+               <td id='cell1308' class='number n13'>0</td>
+               <td id='cell1309' class='number'>0</td>
+               <td id='cell1310' class='number'>0</td>
+               <td id='cell1311' class='number'>0</td>
+               <td class='blackoutlg'></td>
+               <td class='blackoutlg'></td>
+            </tr>
+            <tr>
+               <td class='downarrow' onclick='bumpdn("cell1300")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1301")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1302")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1303")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1304")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1305")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+               <td class='downarrow' onclick='bumpdn("cell1308")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1309")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1310")'></td>
+               <td class='downarrow' onclick='bumpdn("cell1311")'></td>
+               <td class='blackoutsm'></td>
+               <td class='blackoutsm'></td>
+            </tr>
+         </table>
+      </div>
+      <div class='rightside'>
+         <table class='table2'>
+            <!-- across clues -->
+            <tr>
+               <td align='center' style='vertical-align: top; font-size: 125%'><strong><em>CLUES</em></strong><br />
+            </tr>
+            <tr>
+               <td align='left' style='vertical-align: top;'><strong>Across</strong><br />
+                         1  BAAC + 32 = ?<br />
+                         7  D7B - CCC = ? (answer has leading zero)<br />
+                         8  FAF5B9698 - 2789BCA = ?<br />
+                         10 F24 - 277 = ?<br />
+                         11 C0D0 + E = ?<br />
+                         12 FACAEC - E = ?<br />
+                         13 F418 + ACE + 7 = ?<br /><br /><br />
+               </td>
+            </tr>
+            <tr>
+               <td align='left' style='vertical-align: top;'><strong>Down</strong><br />
+                         2  90E0 + 1C0D = ?<br />
+                         3  5F7 + 8009 + ED = ?<br />
+                         4  1F - 10 = ? (answer has leading zero)<br />
+                         5  FA31 + AD = ?<br />
+                         6  FAEE - 20 = ?<br />
+                         7  0AD + 52 = ? (answer has leading zero)<br />
+                         8  FB2 - 5 = ?<br />
+                         9  C14 - 7 = ?<br />
+                         10 BC + E = ?<br /><br />
+               </td>
+            </tr>
+      </div>
+   </body>
+</html>

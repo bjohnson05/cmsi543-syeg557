@@ -1,0 +1,130 @@
+
+Hyas, group ~~~~
+
+I did some investigation into the LMU Build situation.  Here is what I have
+found out.  There are three parts to this set up:
+   1. creating/initializing the domain in LMU Build
+   2. creating the database in LMU Build
+   3. putting the access code HTML/PHP together
+
+CREATING THE DOMAIN
+-------------------
+From the LMU Build dashboard:
+   1. click on the "domains" area
+   2. on the "domains" page that appears, click on "create a new domain"
+   3. on the domains page, under "create a new domain"
+      a. enter a domain you will create such as "test.mysql.com"
+      b. enter a document root; this will be what appears on the URL line
+            to address this domain.  For example, "testmysql" will create
+            a domain called "testmysql.bjohnson.lmu.build"
+      c. if you want the home directory for your files on build to be in
+            your "public_html" directory, click the checkbox next to the
+            "share document root" line; unchecking this will create a new
+            directory for this domain
+   4. click on "submit" ~ the process takes a minute so be patient.
+   5. you will be returned to the "domains" page
+   6. go back to the LMU dashboard, then find the name of the domain you
+         just created and click on it to expand it.
+   7. at the top left, click the "+" next to "FILE" to create a new file
+   8. name the file "index.html"
+   9. right click on the new file and choose "edit"
+  10. when the edit window appears, put the following code into it:
+
+         <html>
+             <head>
+                 <title>Hello World</title>
+             </head>
+             <body>
+                 <h1 style='margin-top: 10em; margin-left: 10em; font-size: 300%'>HELLO WORLD!</h1>
+             </body>
+         </html>
+
+  11. click on the blue "save changes" button, then click "close"
+  12. open a browser window and type in the URL for your new site.  For
+         example, type in "testmysql.bjohnson.lmu.build" ~ you should see
+         the page you just made show up with "HELLO WORLD!" in it.
+  13. you now have a working domain
+
+
+
+CREATING THE DATABASE
+---------------------
+   1. go back to the dashboard page and find the "databases" section
+   2. click on the "MySQL Database Wizard"
+   3. enter the name of your database which will be appended to the name of
+         the account; for example "testmysql" will create a database called
+         "bjohnson_testmysql"
+   4. click "next step" and create a database user name and password ~ DON'T
+         FORGET WHAT THESE ARE ~ the user name will again have the account
+         name on the front like "bjohnson_bjohnson"
+   5. click the "create user" button
+   6, on the "add user to database page that appears next, click the checkbox
+         to add "all privileges" for the new user
+   7. scroll down a bit and click the "next step" button
+   8. the user is added; click "return to MySQL databases"
+   9. return to the dashboard and under "databases" click on "phpMyAdmin"
+  10. on the phpMyAdmin page, click the plus next to your new database
+  11. click on the name of the database; the right pane shows the description
+         of the database.  Since there isn't anything in it yet, nothing is
+         there
+  12. in the "create table" area, enter the name of a table ~ it's best NOT
+         to use spaces in the name; for example 'table01' or 'table-01' work
+         well
+  13. enter the number of columns [the different 'attributes' that every
+         entry in the table will have] and click "go"
+  14. fill out the table values for each column giving the name, type, and
+         any default values you want.  Make sure that one column is of type
+         "int" and that you select that as the "primary" key value under
+         the "Index" column on the page
+  15. when complete, click the "save" button to commit the new table to the
+         database
+  16. continue doing this until you are satisfied with the definition of the
+         database tables
+  17. continue with database creation by entering some values into the table
+         so that you'll have something to test with in the next section
+  18. you can also put data into a spreadsheet, save it as CSV, then use the
+         "import" function to load up your data
+
+
+PUTTING THE ACCESS CODE TOGETHER
+--------------------------------
+   1. files that access the database must be named ".php" not ".html" ~ or
+         else the PHP access to the data won't work.
+   2. I have included a couple of files that have the appropriate code for
+         accessing
+   3. the values in those files are from my research, but I have made a few
+         changes to them to illustrate the process
+   4. in my database, there was one table with five columns.  The columns
+         were named:
+            subjectID
+            correctness
+            timescore
+            time
+            totalscore
+   5. there are three parts to the process:
+         the html file "App-C2_crossword1-c.html" which is the main file
+         the javascript file "crossword-c.js" which has the javascript that
+            controls all the operations
+         the PHP file "connecttest1.php" which handles the database access
+   6. the way this worked was as follows:
+         a. the user would open the HTML file which also had the javascript
+         b. they would work the crossword puzzle and when they had completed
+            it click a "stop" button which would then calculate their score
+         c. the javascript file would then formulate a query to send to the
+            PHP file, using the URL line to pass parameter values to PHP;
+            you can see the query on lines 368 and 369 of the javascript
+         d. the PHP file would then parse the parameters and put them into
+            local PHP variables; you can see the PHP code for extracting the
+            values on lines 35-39 of the PHP file
+         e. the PHP file would then connect to the MySQL database, using the
+            host, user, password, and database name; you can see this in PHP
+            at lines 49-58, including error handling
+         f. the PHP file would then write data into the database using the
+            code in lines 79-94; this includes notification of success or
+            failure to write data
+         f. the PHP file would then do another query on the database to make
+            sure the data was in there and would return another message to
+            the user of success or failure of verification; this can be seen
+            on lines 97-123
+         g. finally, the PHP file would close the connection to the database
+            and free up the result variable
